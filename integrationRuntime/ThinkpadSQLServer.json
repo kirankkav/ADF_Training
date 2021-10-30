@@ -1,0 +1,6 @@
+{
+	"name": "ThinkpadSQLServer",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}

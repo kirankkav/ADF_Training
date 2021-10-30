@@ -1,0 +1,9 @@
+{
+	"name": "ADF-Training-KKAV",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "3ea8c78a-db63-4fcf-9bd5-5d9f975115c6",
+		"tenantId": "51ea74ba-139a-4fcf-9a93-de9dbfa10371"
+	}
+}

@@ -1,0 +1,81 @@
+{
+	"name": "SQLDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Thinkpad_SqlServer",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"dbName": {
+					"value": "@dataset().dbName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"dbName": {
+				"type": "string"
+			},
+			"tableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "GeographyKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "City",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StateProvinceCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "StateProvinceName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "CountryRegionCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "EnglishCountryRegionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SpanishCountryRegionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FrenchCountryRegionName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "PostalCode",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SalesTerritoryKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "IpAddressLocator",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": {
+				"value": "@dataset().tableName",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

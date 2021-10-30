@@ -1,0 +1,30 @@
+{
+	"name": "ScheduleTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "CopyDataDbtoDb",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"dbSourceName": "AdventureWorksDW2016",
+					"dbDestinationName": "ADF_Training",
+					"tableSource": "DimCurrency",
+					"tableDestination": "Currency"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 5,
+				"startTime": "2021-10-30T03:11:00",
+				"timeZone": "India Standard Time"
+			}
+		}
+	}
+}

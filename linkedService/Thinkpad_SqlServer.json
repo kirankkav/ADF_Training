@@ -1,0 +1,21 @@
+{
+	"name": "Thinkpad_SqlServer",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"dbName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "integrated security=False;data source=THINKPAD\\KKSERVER;initial catalog=@{linkedService().dbName};user id=kirankkav",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJjNTI1M2UwMi0xZjA1LTQ4NjktYjdmMy0zODg3MDA3ZThjYzAiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "ThinkpadSQLServer",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

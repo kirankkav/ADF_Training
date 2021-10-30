@@ -1,0 +1,20 @@
+{
+	"name": "BlobInputDataset",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlob_adf_training",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "data.txt",
+				"folderPath": "input",
+				"container": "adf-training"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

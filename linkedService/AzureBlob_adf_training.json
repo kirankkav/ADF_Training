@@ -1,0 +1,12 @@
+{
+	"name": "AzureBlob_adf_training",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"connectionString": "DefaultEndpointsProtocol=https;AccountName=adftrainingkkav;EndpointSuffix=core.windows.net;",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkFERi1UUkFJTklORy1LS0FWX2ExNjFkNWFmLWNkMmUtNDY5MC1hM2VlLTdkY2M1ZDI2ZmM3YSINCn0="
+		}
+	}
+}
