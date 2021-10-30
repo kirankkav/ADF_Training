@@ -1,0 +1,638 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADF-Training-KKAV"
+		},
+		"AzureBlob_adf_training_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlob_adf_training'"
+		},
+		"Thinkpad_SqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Thinkpad_SqlServer'"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbSourceName": {
+			"type": "string",
+			"defaultValue": "AdventureWorksDW2016"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbDestinationName": {
+			"type": "string",
+			"defaultValue": "ADF_Training"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableSource": {
+			"type": "string",
+			"defaultValue": "DimCurrency"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableDestination": {
+			"type": "string",
+			"defaultValue": "Currency"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_dbSourceName": {
+			"type": "string",
+			"defaultValue": "AdventureWorksDW2016"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_dbDestinationName": {
+			"type": "string",
+			"defaultValue": "ADF_Training"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_tableSource": {
+			"type": "string",
+			"defaultValue": "DimGeography"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_tableDestination": {
+			"type": "string",
+			"defaultValue": "geography"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/pipeline1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureBlob_adf_training')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureBlob_adf_training_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ThinkpadSQLServer')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/BlobInputDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlob_adf_training",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "data.txt",
+						"folderPath": "input",
+						"container": "adf-training"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlob_adf_training')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ForEachOutputBlobDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlob_adf_training",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"FolderName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": {
+							"value": "@dataset().FolderName",
+							"type": "Expression"
+						},
+						"container": "adf-training"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlob_adf_training')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adf_training_dataset_02')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureBlob_adf_training",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "dataout.txt",
+						"folderPath": "output",
+						"container": "adf-training"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureBlob_adf_training')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Thinkpad_SqlServer')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"dbName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('Thinkpad_SqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "ThinkpadSQLServer",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/ThinkpadSQLServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ForEachPipline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@pipeline().parameters.OutputFolder",
+								"type": "Expression"
+							},
+							"isSequential": true,
+							"activities": [
+								{
+									"name": "Copy data",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "BinarySource",
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "BinaryReadSettings"
+											}
+										},
+										"sink": {
+											"type": "BinarySink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "BlobInputDataset",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ForEachOutputBlobDataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"FolderName": {
+													"value": "@item()",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"OutputFolder": {
+						"type": "array",
+						"defaultValue": [
+							"ForEachOutput1",
+							"ForEachOutput2",
+							"ForEachOutput3"
+						]
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-30T19:31:18Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/BlobInputDataset')]",
+				"[concat(variables('factoryId'), '/datasets/ForEachOutputBlobDataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/adf_training_pipeline_01')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyBlobtoBlob",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "adf-training/input/data.txt"
+							},
+							{
+								"name": "Destination",
+								"value": "adf-training/output/dataout.txt"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "BlobInputDataset",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "adf_training_dataset_02",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-30T19:26:30Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/BlobInputDataset')]",
+				"[concat(variables('factoryId'), '/datasets/adf_training_dataset_02')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQLDataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Thinkpad_SqlServer",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"dbName": {
+							"value": "@dataset().dbName",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"dbName": {
+						"type": "string"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "GeographyKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "City",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StateProvinceCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "StateProvinceName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CountryRegionCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EnglishCountryRegionName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SpanishCountryRegionName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FrenchCountryRegionName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PostalCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalesTerritoryKey",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "IpAddressLocator",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": {
+						"value": "@dataset().tableName",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/Thinkpad_SqlServer')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CopyDataDbtoDb')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "DBtoDBCopy",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "dbo.@{pipeline().parameters.tableSource}"
+							},
+							{
+								"name": "Destination",
+								"value": "dbo.@{pipeline().parameters.tableDestination}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "SqlServerSink"
+							},
+							"enableStaging": false,
+							"enableSkipIncompatibleRow": true,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SQLDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"dbName": {
+										"value": "@pipeline().parameters.dbSourceName",
+										"type": "Expression"
+									},
+									"tableName": {
+										"value": "@pipeline().parameters.tableSource",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "SQLDataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"dbName": {
+										"value": "@pipeline().parameters.dbDestinationName",
+										"type": "Expression"
+									},
+									"tableName": {
+										"value": "@pipeline().parameters.tableDestination",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"dbSourceName": {
+						"type": "string"
+					},
+					"dbDestinationName": {
+						"type": "string"
+					},
+					"tableSource": {
+						"type": "string"
+					},
+					"tableDestination": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2021-10-29T21:38:50Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SQLDataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ScheduleTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "CopyDataDbtoDb",
+							"type": "PipelineReference"
+						},
+						"parameters": {
+							"dbSourceName": "[parameters('ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbSourceName')]",
+							"dbDestinationName": "[parameters('ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbDestinationName')]",
+							"tableSource": "[parameters('ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableSource')]",
+							"tableDestination": "[parameters('ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableDestination')]"
+						}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 5,
+						"startTime": "2021-10-30T03:11:00",
+						"timeZone": "India Standard Time"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/CopyDataDbtoDb')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/TumblingTrigger')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "CopyDataDbtoDb",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"dbSourceName": "[parameters('TumblingTrigger_properties_pipeline_parameters_dbSourceName')]",
+						"dbDestinationName": "[parameters('TumblingTrigger_properties_pipeline_parameters_dbDestinationName')]",
+						"tableSource": "[parameters('TumblingTrigger_properties_pipeline_parameters_tableSource')]",
+						"tableDestination": "[parameters('TumblingTrigger_properties_pipeline_parameters_tableDestination')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Minute",
+					"interval": 5,
+					"startTime": "2021-10-29T21:18:00Z",
+					"endTime": "2021-10-29T21:35:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 50,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/CopyDataDbtoDb')]"
+			]
+		}
+	]
+}

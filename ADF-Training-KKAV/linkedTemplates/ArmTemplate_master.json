@@ -1,0 +1,112 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "ADF-Training-KKAV"
+		},
+		"AzureBlob_adf_training_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureBlob_adf_training'"
+		},
+		"Thinkpad_SqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'Thinkpad_SqlServer'"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbSourceName": {
+			"type": "string",
+			"defaultValue": "AdventureWorksDW2016"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbDestinationName": {
+			"type": "string",
+			"defaultValue": "ADF_Training"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableSource": {
+			"type": "string",
+			"defaultValue": "DimCurrency"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableDestination": {
+			"type": "string",
+			"defaultValue": "Currency"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_dbSourceName": {
+			"type": "string",
+			"defaultValue": "AdventureWorksDW2016"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_dbDestinationName": {
+			"type": "string",
+			"defaultValue": "ADF_Training"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_tableSource": {
+			"type": "string",
+			"defaultValue": "DimGeography"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_tableDestination": {
+			"type": "string",
+			"defaultValue": "geography"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "ADF-Training-KKAV_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlob_adf_training_connectionString": {
+						"value": "[parameters('AzureBlob_adf_training_connectionString')]"
+					},
+					"Thinkpad_SqlServer_connectionString": {
+						"value": "[parameters('Thinkpad_SqlServer_connectionString')]"
+					},
+					"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbSourceName": {
+						"value": "[parameters('ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbSourceName')]"
+					},
+					"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbDestinationName": {
+						"value": "[parameters('ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbDestinationName')]"
+					},
+					"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableSource": {
+						"value": "[parameters('ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableSource')]"
+					},
+					"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableDestination": {
+						"value": "[parameters('ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableDestination')]"
+					},
+					"TumblingTrigger_properties_pipeline_parameters_dbSourceName": {
+						"value": "[parameters('TumblingTrigger_properties_pipeline_parameters_dbSourceName')]"
+					},
+					"TumblingTrigger_properties_pipeline_parameters_dbDestinationName": {
+						"value": "[parameters('TumblingTrigger_properties_pipeline_parameters_dbDestinationName')]"
+					},
+					"TumblingTrigger_properties_pipeline_parameters_tableSource": {
+						"value": "[parameters('TumblingTrigger_properties_pipeline_parameters_tableSource')]"
+					},
+					"TumblingTrigger_properties_pipeline_parameters_tableDestination": {
+						"value": "[parameters('TumblingTrigger_properties_pipeline_parameters_tableDestination')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}

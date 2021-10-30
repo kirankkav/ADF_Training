@@ -1,0 +1,39 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "ADF-Training-KKAV"
+		},
+		"AzureBlob_adf_training_connectionString": {
+			"value": ""
+		},
+		"Thinkpad_SqlServer_connectionString": {
+			"value": ""
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbSourceName": {
+			"value": "AdventureWorksDW2016"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_dbDestinationName": {
+			"value": "ADF_Training"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableSource": {
+			"value": "DimCurrency"
+		},
+		"ScheduleTrigger_properties_CopyDataDbtoDb_parameters_tableDestination": {
+			"value": "Currency"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_dbSourceName": {
+			"value": "AdventureWorksDW2016"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_dbDestinationName": {
+			"value": "ADF_Training"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_tableSource": {
+			"value": "DimGeography"
+		},
+		"TumblingTrigger_properties_pipeline_parameters_tableDestination": {
+			"value": "geography"
+		}
+	}
+}
